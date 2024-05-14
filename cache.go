@@ -26,22 +26,24 @@ func NewCache(duration time.Duration) *Cache {
 }
 
 // Set will write add/update an entry based on the Key
-func (ttlCache *Cache) Set(key string, value []byte, duration time.Duration) {
+func (ttlCache *Cache) Set(key, value []byte, duration time.Duration) {
 	// Lock now and Unlock at the end of the scope
 	ttlCache.Mx.Lock()
 	defer ttlCache.Mx.Unlock()
 
 	expirationTime := time.Now().Add(duration)
-	ttlCache.Entries[key] = &CacheEntry{Value: value, ExpirationTime: expirationTime}
+	keyString := string(key)
+	ttlCache.Entries[keyString] = &CacheEntry{Value: value, ExpirationTime: expirationTime}
 }
 
 // Get will return the entry value based on the Key
-func (ttlCache *Cache) Get(key string) ([]byte, time.Duration) {
+func (ttlCache *Cache) Get(key []byte) ([]byte, time.Duration) {
 	// Lock now and Unlock at the end of the scope
 	ttlCache.Mx.RLock()
 	defer ttlCache.Mx.RUnlock()
 
-	entry, exists := ttlCache.Entries[key]
+	keyString := string(key)
+	entry, exists := ttlCache.Entries[keyString]
 	if !exists || entry.IsExpired() {
 		return nil, 0
 	}
