@@ -45,7 +45,7 @@ func (ttlCache *Cache) Get(key []byte) ([]byte, time.Duration) {
 	keyString := string(key)
 	entry, exists := ttlCache.Entries[keyString]
 	if !exists || entry.IsExpired() {
-		return nil, 0
+		return []byte{}, 0
 	}
 	// return the value and the remaining time in the cache
 	return entry.Value, entry.ExpirationTime.Sub(time.Now())
@@ -74,4 +74,17 @@ func (ttlCache *Cache) triggerRoutine() {
 			ttlCache.ActiveStrategyTimer.Reset(time.Duration(rand.Intn(100)) * time.Millisecond)
 		}
 	}
+}
+
+// EmptyEntries clean up all the entries
+func (ttlCache *Cache) EmptyEntries() {
+	// Lock now and Unlock at the end of the scope
+	ttlCache.Mx.Lock()
+	defer ttlCache.Mx.Unlock()
+
+	ttlCache.Entries = make(map[string]*CacheEntry)
+}
+
+func (ttlCache *Cache) TotalEntries() int {
+	return len(ttlCache.Entries)
 }
