@@ -4,12 +4,16 @@ This is a Coding challenge to show up my skill as a Golang Senior. The company A
 # Coding Challenge description
 
 Cache
+
 Develop a cache that supports TTL with an active strategy instead of a lazy strategy (or passive).
 You can read more about lazy vs active removing [here](https://www.pankajtanwar.in/blog/how-redis-expires-keys-a-deep-dive-into-how-ttl-works-internally-in-redis).
 
 The cache should support a string-like type as key and a byte slice as value.
-You can't use a `map` or an external library. You must create your own data structure. 
+
+You can't use a `map` or an external library. You must create your own data structure.
+
 The cache functions can't produce more than 1 allocation per operation.
+
 The code must come with a benchmark (in order to check for the allocations).
 
 The cache should satisfy the following interface:
